@@ -1,0 +1,492 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Panel de Administración - GabyDev</title>
+  <meta name="robots" content="noindex, nofollow">
+  
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  
+  <!-- Back4App SDK -->
+  <script src="https://npmcdn.com/parse@4.2.0/dist/parse.min.js"></script>
+  
+  <style>
+    :root {
+      --primary: #3b82f6;
+      --primary-dark: #2563eb;
+      --secondary: #f59e0b;
+      --gray-50: #f8fafc;
+      --gray-100: #f1f5f9;
+      --gray-200: #e2e8f0;
+      --gray-300: #cbd5e1;
+      --gray-400: #94a3b8;
+      --gray-500: #64748b;
+      --gray-600: #475569;
+      --gray-700: #334155;
+      --gray-800: #1e293b;
+      --gray-900: #0f172a;
+      --red-500: #ef4444;
+      --green-500: #10b981;
+      --yellow-500: #f59e0b;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: linear-gradient(135deg, var(--gray-900) 0%, var(--gray-800) 50%, var(--primary-dark) 100%);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* Animated background particles */
+    .particles {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      z-index: 1;
+    }
+
+    .particle {
+      position: absolute;
+      background: rgba(59, 130, 246, 0.1);
+      border-radius: 50%;
+      animation: float 20s infinite linear;
+    }
+
+    .particle:nth-child(odd) {
+      background: rgba(245, 158, 11, 0.1);
+      animation-duration: 25s;
+    }
+
+    @keyframes float {
+      0% {
+        transform: translateY(100vh) rotate(0deg);
+        opacity: 0;
+      }
+      10% {
+        opacity: 1;
+      }
+      90% {
+        opacity: 1;
+      }
+      100% {
+        transform: translateY(-100vh) rotate(360deg);
+        opacity: 0;
+      }
+    }
+
+    .login-container {
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(20px);
+      border-radius: 20px;
+      padding: 3rem;
+      box-shadow: 0 25px 50px rgba(0, 0, 0, 0.2);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      max-width: 450px;
+      width: 90%;
+      position: relative;
+      z-index: 10;
+      animation: slideUp 0.8s ease-out;
+    }
+
+    @keyframes slideUp {
+      from {
+        opacity: 0;
+        transform: translateY(50px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .login-header {
+      text-align: center;
+      margin-bottom: 2rem;
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      margin-bottom: 1rem;
+    }
+
+    .logo-text {
+      font-size: 2rem;
+      font-weight: 700;
+      color: var(--gray-800);
+    }
+
+    .logo-accent {
+      font-size: 2rem;
+      font-weight: 700;
+      color: var(--primary);
+    }
+
+    .login-title {
+      font-size: 1.5rem;
+      font-weight: 600;
+      color: var(--gray-800);
+      margin-bottom: 0.5rem;
+    }
+
+    .login-subtitle {
+      color: var(--gray-600);
+      font-size: 0.95rem;
+    }
+
+    .form-group {
+      margin-bottom: 1.5rem;
+      position: relative;
+    }
+
+    .form-label {
+      display: block;
+      margin-bottom: 0.5rem;
+      color: var(--gray-700);
+      font-weight: 500;
+      font-size: 0.95rem;
+    }
+
+    .form-input {
+      width: 100%;
+      padding: 1rem 1.25rem;
+      border: 2px solid var(--gray-200);
+      border-radius: 12px;
+      font-size: 1rem;
+      transition: all 0.3s ease;
+      background: white;
+      position: relative;
+    }
+
+    .form-input:focus {
+      outline: none;
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+    }
+
+    .password-toggle {
+      position: absolute;
+      right: 1rem;
+      top: 50%;
+      transform: translateY(-50%);
+      background: none;
+      border: none;
+      color: var(--gray-500);
+      cursor: pointer;
+      padding: 0.5rem;
+      transition: color 0.3s ease;
+    }
+
+    .password-toggle:hover {
+      color: var(--gray-700);
+    }
+
+    .login-button {
+      width: 100%;
+      background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+      color: white;
+      border: none;
+      padding: 1rem 1.5rem;
+      border-radius: 12px;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      position: relative;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+    }
+
+    .login-button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 25px rgba(59, 130, 246, 0.3);
+    }
+
+    .login-button:active {
+      transform: translateY(0);
+    }
+
+    .login-button:disabled {
+      opacity: 0.7;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    .error-message {
+      background: rgba(239, 68, 68, 0.1);
+      border: 1px solid rgba(239, 68, 68, 0.2);
+      color: var(--red-500);
+      padding: 1rem;
+      border-radius: 8px;
+      margin-bottom: 1rem;
+      font-size: 0.9rem;
+      display: none;
+      animation: shake 0.5s ease-in-out;
+    }
+
+    @keyframes shake {
+      0%, 100% { transform: translateX(0); }
+      25% { transform: translateX(-5px); }
+      75% { transform: translateX(5px); }
+    }
+
+    .loading-spinner {
+      width: 20px;
+      height: 20px;
+      border: 2px solid rgba(255, 255, 255, 0.3);
+      border-top: 2px solid white;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+      display: none;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    .back-link {
+      position: absolute;
+      top: 2rem;
+      left: 2rem;
+      color: rgba(255, 255, 255, 0.8);
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-weight: 500;
+      transition: all 0.3s ease;
+      z-index: 10;
+    }
+
+    .back-link:hover {
+      color: white;
+      transform: translateX(-5px);
+    }
+
+    @media (max-width: 480px) {
+      .login-container {
+        padding: 2rem;
+        margin: 1rem;
+      }
+      
+      .back-link {
+        top: 1rem;
+        left: 1rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- Animated background particles -->
+  <div class="particles"></div>
+
+  <!-- Back to main site link -->
+  <a href="index.html" class="back-link">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+      <path d="m15 18-6-6 6-6"/>
+    </svg>
+    Volver al sitio
+  </a>
+
+  <!-- Login container -->
+  <div class="login-container">
+    <div class="login-header">
+      <div class="logo">
+        <span class="logo-text">Gaby</span>
+        <span class="logo-accent">Dev</span>
+      </div>
+      <h1 class="login-title">Panel de Administración</h1>
+      <p class="login-subtitle">Ingresa tu contraseña para acceder al dashboard</p>
+    </div>
+
+    <form id="loginForm">
+      <div class="error-message" id="errorMessage"></div>
+      
+      <div class="form-group">
+        <label for="password" class="form-label">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display: inline; margin-right: 0.5rem;">
+            <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
+            <circle cx="12" cy="16" r="1"/>
+            <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+          </svg>
+          Contraseña de Administrador
+        </label>
+        <div style="position: relative;">
+          <input 
+            type="password" 
+            id="password" 
+            name="password" 
+            class="form-input" 
+            placeholder="Ingresa tu contraseña"
+            required
+            autocomplete="current-password"
+          >
+          <button type="button" class="password-toggle" id="togglePassword">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+              <circle cx="12" cy="12" r="3"/>
+            </svg>
+          </button>
+        </div>
+      </div>
+
+      <button type="submit" class="login-button" id="loginButton">
+        <span id="buttonText">Acceder al Dashboard</span>
+        <div class="loading-spinner" id="loadingSpinner"></div>
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" id="buttonIcon">
+          <path d="m9 18 6-6-6-6"/>
+        </svg>
+      </button>
+    </form>
+  </div>
+
+  <script>
+    // Initialize Parse
+    Parse.initialize("bi5z5LWihjCMZ1CQSAlWINkV6gv2y7LJzkXbxgg6", "vsRT0IVv4jDuy8TwogfEebaWvPuaVkI4zWAmQgGD");
+    Parse.serverURL = "https://parseapi.back4app.com/";
+
+    // Create animated particles
+    function createParticles() {
+      const particlesContainer = document.querySelector('.particles');
+      const particleCount = 50;
+
+      for (let i = 0; i < particleCount; i++) {
+        const particle = document.createElement('div');
+        particle.classList.add('particle');
+        
+        const size = Math.random() * 4 + 2;
+        const startPosition = Math.random() * 100;
+        const delay = Math.random() * 20;
+        
+        particle.style.cssText = `
+          width: ${size}px;
+          height: ${size}px;
+          left: ${startPosition}%;
+          animation-delay: ${delay}s;
+        `;
+        
+        particlesContainer.appendChild(particle);
+      }
+    }
+
+    // Password toggle functionality
+    document.getElementById('togglePassword').addEventListener('click', function() {
+      const passwordInput = document.getElementById('password');
+      const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+      passwordInput.setAttribute('type', type);
+      
+      // Update icon
+      this.innerHTML = type === 'password' 
+        ? `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+             <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+             <circle cx="12" cy="12" r="3"/>
+           </svg>`
+        : `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+             <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/>
+             <line x1="1" y1="1" x2="23" y2="23"/>
+           </svg>`;
+    });
+
+    // Form submission
+    document.getElementById('loginForm').addEventListener('submit', async function(e) {
+      e.preventDefault();
+      
+      const password = document.getElementById('password').value;
+      const errorMessage = document.getElementById('errorMessage');
+      const loginButton = document.getElementById('loginButton');
+      const buttonText = document.getElementById('buttonText');
+      const loadingSpinner = document.getElementById('loadingSpinner');
+      const buttonIcon = document.getElementById('buttonIcon');
+      
+      // Hide error message
+      errorMessage.style.display = 'none';
+      
+      // Show loading state
+      loginButton.disabled = true;
+      buttonText.textContent = 'Verificando...';
+      loadingSpinner.style.display = 'block';
+      buttonIcon.style.display = 'none';
+      
+      // Simulate network delay for better UX
+      await new Promise(resolve => setTimeout(resolve, 1000));
+      
+      // Check password
+      if (password === 'GabyDev2025!') {
+        // Success - redirect to dashboard
+        buttonText.textContent = 'Acceso concedido';
+        loadingSpinner.style.display = 'none';
+        buttonIcon.innerHTML = `
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polyline points="20,6 9,17 4,12"/>
+          </svg>
+        `;
+        buttonIcon.style.display = 'block';
+        
+        // Store login session
+        localStorage.setItem('adminLoggedIn', 'true');
+        localStorage.setItem('adminLoginTime', Date.now().toString());
+        
+        // Redirect to main page with admin access
+        setTimeout(() => {
+          window.location.href = 'index.html?admin=true';
+        }, 1000);
+        
+      } else {
+        // Error - wrong password
+        errorMessage.textContent = '❌ Contraseña incorrecta. Verifica e intenta nuevamente.';
+        errorMessage.style.display = 'block';
+        
+        // Reset button state
+        loginButton.disabled = false;
+        buttonText.textContent = 'Acceder al Dashboard';
+        loadingSpinner.style.display = 'none';
+        buttonIcon.innerHTML = `
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="m9 18 6-6-6-6"/>
+          </svg>
+        `;
+        buttonIcon.style.display = 'block';
+        
+        // Focus password input
+        document.getElementById('password').focus();
+        document.getElementById('password').select();
+      }
+    });
+
+    // Auto-focus password input
+    document.addEventListener('DOMContentLoaded', function() {
+      createParticles();
+      document.getElementById('password').focus();
+    });
+
+    // Handle Enter key
+    document.getElementById('password').addEventListener('keypress', function(e) {
+      if (e.key === 'Enter') {
+        document.getElementById('loginForm').dispatchEvent(new Event('submit'));
+      }
+    });
+  </script>
+</body>
+</html>
